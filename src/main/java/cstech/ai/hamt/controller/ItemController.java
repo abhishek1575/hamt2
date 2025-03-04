@@ -1,5 +1,6 @@
 package cstech.ai.hamt.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cstech.ai.hamt.dto.ItemDto;
 import cstech.ai.hamt.entity.Item;
 import cstech.ai.hamt.repository.ItemRepository;
@@ -51,9 +52,11 @@ public class ItemController {
     public ResponseEntity<?> addItems(@RequestBody Item item){
         try {
             if (itemsService.isPresent(item)) {
+                System.out.println("item controller add method "+item);
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("Item Already Exist");
             }else {
+                System.out.println("item controller add method "+item);
                 itemRepository.save(item);
                 return ResponseEntity.ok("Item Added Successfully");
             }
@@ -68,7 +71,7 @@ public class ItemController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> modifyUser(@RequestBody ItemDto itemDto){
         try {
-            String response =itemsService.modifyItem(itemDto);
+            String response = itemsService.modifyItem(itemDto);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

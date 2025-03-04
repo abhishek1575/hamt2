@@ -1,5 +1,6 @@
 package cstech.ai.hamt.service;
 
+import ch.qos.logback.core.CoreConstants;
 import cstech.ai.hamt.dto.ItemDto;
 import cstech.ai.hamt.entity.Item;
 import cstech.ai.hamt.repository.ItemRepository;
@@ -38,6 +39,10 @@ public class ItemsService {
         item.setPackage_box(itemDto.getPackage_box());
         item.setStock(itemDto.getStock());
         item.setSap_no(itemDto.getSap_no());
+
+        itemRepository.updateReturnable(itemDto.isReturnable(), itemDto.getId());
+
+
         itemRepository.save(item);
         return "modify Successfully";
     }

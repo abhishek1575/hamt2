@@ -1,6 +1,7 @@
 package cstech.ai.hamt.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -39,13 +40,23 @@ public class Item {
 
     private String mpn;
 
-    //    @NotNull
     private Long sap_no;
     @NotNull
     @PositiveOrZero
     private Long stock;
 
-    private boolean status;
-
     private boolean isDeleted = false;
+
+    @Column(name = "is_returnable")
+    @JsonProperty("isReturnable")
+    private boolean isReturnable;
+
+    public boolean isReturnable() {
+        return isReturnable;
+    }
+
+    public void setReturnable(boolean isReturnable) {
+        this.isReturnable = isReturnable;
+    }
+
 }

@@ -91,6 +91,12 @@
 			<artifactId>sendgrid-java</artifactId>
 			<version>4.9.3</version>
 		</dependency>
+<!--Resent Mail Service https://resend.com/-->
+		<dependency>
+			<groupId>com.resend</groupId>
+			<artifactId>resend-java</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 
 		<!--		 Testing-->
 		<dependency>

@@ -31,6 +31,6 @@ public interface RequestRepository extends JpaRepository<ItemRequest, Long> {
 
     boolean existsByIsNewRequestTrue();
 
-    @Query(value="SELECT * FROM request  WHERE userId = :userId", nativeQuery=true)
+    @Query(value="SELECT * FROM request  WHERE user_id = :userId", nativeQuery=true)
     List<ItemRequest> findByUserId(@Param("userId") Long userId);
 }

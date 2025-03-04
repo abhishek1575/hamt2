@@ -33,4 +33,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value="SELECT * FROM item WHERE sap_no = :sap_no", nativeQuery=true)
     Optional<Item> findBySap_no(Long sap_no);
 
+    @Modifying
+    @Query("UPDATE Item i SET i.isReturnable = :isReturnable WHERE i.id = :id")
+    void updateReturnable(@Param("isReturnable") boolean isReturnable, @Param("id") Long id);
+
 }

@@ -22,6 +22,9 @@ public class ItemRequestDto  {
     private  String userName;
     private Long userId;
     private String projectName;
+    private String approvedBy;
     private String remark;
     private boolean isNewRequest;
+    private LocalDateTime returnDate;
+
 }

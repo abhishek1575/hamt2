@@ -37,6 +37,8 @@ public class ItemRequest {
     @Column(name="userId" , nullable=false)
     private Long userId;
 
+    private String approvedBy;
+
     @Column(name = "project_name")
     private String projectName;
 
@@ -53,5 +55,9 @@ public class ItemRequest {
 
     @Column(name = "is_new_request", nullable = false)
     public boolean isNewRequest = true;
+
+    @Column(name="returnDate")
+    private LocalDateTime returnDate;
+
 }
 

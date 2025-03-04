@@ -22,30 +22,57 @@ public class RequestService {
 
     @Autowired
     private ItemRepository itemRepository;
-
-    public String  requestItem(ItemRequest itemRequest){
-        Optional<Item> optionalItem = itemRepository.findById(itemRequest.getId());
-        if(optionalItem.isEmpty()){
+    public String requestItem(ItemRequest itemRequest) {
+        Optional<Item> optionalItem = itemRepository.findById(itemRequest.getItem().getId()); // Get item by its ID
+        if (optionalItem.isEmpty()) {
             return "Item Not Found";
         }
         Item item = optionalItem.get();
-        if(item.getStock()< itemRequest.getQuantityRequested()){
-            return "Requested Quantity is exceeds Available Quantity";
+
+        if (item.getStock() < itemRequest.getQuantityRequested()) {
+            return "Requested Quantity exceeds Available Quantity";
         }
 
-        ItemRequest itemRequest1 = mapToItemRequest(itemRequest,item  );
-//            ItemRequest itemRequest1 = new ItemRequest();
-//            itemRequest1.setItem(item);
-//            itemRequest1.setQuantityRequested(itemRequest.getQuantityRequested());
-//            itemRequest1.setRemark(itemRequest.getRemark());
-//            itemRequest1.setProjectName(itemRequest.getProjectName());
-//            itemRequest1.setUserName(itemRequest.getUserName());
-//            itemRequest1.setApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
-//            itemRequest1.setNewRequest(true);
+        if (item.isReturnable() && itemRequest.getReturnDate() == null) {
+            return "Return Date is required for returnable items";
+        }
+
+        ItemRequest itemRequest1 = mapToItemRequest(itemRequest, item);
+        itemRequest1.setNewRequest(true);
 
         requestRepository.save(itemRequest1);
         return "Request sent to the admin";
     }
+
+
+//    public String  requestItem(ItemRequest itemRequest){
+//        Optional<Item> optionalItem = itemRepository.findById(itemRequest.getId());
+//        if(optionalItem.isEmpty()){
+//            return "Item Not Found";
+//        }
+//        Item item = optionalItem.get();
+//        if(item.getStock()< itemRequest.getQuantityRequested()){
+//            return "Requested Quantity is exceeds Available Quantity";
+//        }
+//
+//        ItemRequest itemRequest1 = mapToItemRequest(itemRequest,item  );
+////            ItemRequest itemRequest1 = new ItemRequest();
+////            itemRequest1.setItem(item);
+////            itemRequest1.setQuantityRequested(itemRequest.getQuantityRequested());
+////            itemRequest1.setRemark(itemRequest.getRemark());
+////            itemRequest1.setProjectName(itemRequest.getProjectName());
+////            itemRequest1.setUserName(itemRequest.getUserName());
+////            itemRequest1.setApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
+//            if(item.isReturnable()){
+//                if(itemRequest.getReturnDate()!=null) {
+//                    itemRequest1.setReturnDate(itemRequest.getReturnDate());
+//                }else return "Return Date Is Required";
+//            }
+//            itemRequest1.setNewRequest(true);
+//
+//        requestRepository.save(itemRequest1);
+//        return "Request sent to the admin";
+//    }
 
     public List<ItemRequestDto> getAllNonApprovedRequest() {
         List<ItemRequest> itemRequests=requestRepository.findByApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
@@ -102,6 +129,8 @@ public class RequestService {
                 .userId(itemRequest.getUserId())
                 .projectName(itemRequest.getProjectName())
                 .remark(itemRequest.getRemark())
+                .approvedBy(itemRequest.getApprovedBy())
+                .returnDate(itemRequest.getReturnDate())
                 .build();
     }
 
@@ -114,6 +143,7 @@ public class RequestService {
                 .approvalStatus(itemRequest.getApprovalStatus())
                 .userName(itemRequest.getUserName())
                 .userId(itemRequest.getUserId())
+                .approvedBy(itemRequest.getApprovedBy())
                 .build();
     }
 }

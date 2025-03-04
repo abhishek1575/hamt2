@@ -3,6 +3,7 @@ package cstech.ai.hamt.controller;
 import cstech.ai.hamt.dto.ItemRequestDto;
 import cstech.ai.hamt.entity.ItemRequest;
 import cstech.ai.hamt.repository.RequestRepository;
+import cstech.ai.hamt.service.EmailService;
 import cstech.ai.hamt.service.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/request")
 public class RequestController {
+
+
     @Autowired
     private RequestService requestService;
 
     @Autowired
     private RequestRepository requestRepository;
+
 
     // to send request from available button
     @PostMapping("/request")
@@ -56,6 +60,9 @@ public class RequestController {
                 itemRequestDto.setUserName(itemRequest.getUserName());
                 itemRequestDto.setProjectName(itemRequest.getProjectName());
                 itemRequestDto.setRemark(itemRequest.getRemark());
+                itemRequestDto.setApprovedBy(itemRequest.getApprovedBy());
+                itemRequestDto.setUserId(itemRequest.getUserId());
+                itemRequestDto.setReturnDate(itemRequest.getReturnDate());
                 return itemRequestDto;
             }).collect(Collectors.toList());
 
@@ -127,6 +134,8 @@ public class RequestController {
         }
         return ResponseEntity.ok(dtoList);
     }
+
+
 
 }
 

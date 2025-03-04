@@ -1,5 +1,6 @@
 package cstech.ai.hamt.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +15,9 @@ public class ItemDto {
 
     private String name;
 
-    private String category;
-
     private String subCategory;
+
+    private String category;
 
     private String value;
 
@@ -34,6 +35,8 @@ public class ItemDto {
 
     private Long stock;
 
-    private boolean status;
+    @JsonProperty("isReturnable")
+    private boolean isReturnable;
+
 }
 
