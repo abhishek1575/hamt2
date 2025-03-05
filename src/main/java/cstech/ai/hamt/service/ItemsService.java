@@ -40,6 +40,7 @@ public class ItemsService {
         item.setStock(itemDto.getStock());
         item.setSap_no(itemDto.getSap_no());
 
+
         itemRepository.updateReturnable(itemDto.isReturnable(), itemDto.getId());
 
 
@@ -81,6 +82,7 @@ public class ItemsService {
                 .sap_no(item.getSap_no())
                 .location(item.getLocation())
                 .stock(item.getStock())
+                .isReturnable(item.getIsReturnable())
                 .build();
 
     }

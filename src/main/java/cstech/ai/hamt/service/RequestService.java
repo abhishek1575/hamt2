@@ -23,7 +23,12 @@ public class RequestService {
     @Autowired
     private ItemRepository itemRepository;
     public String requestItem(ItemRequest itemRequest) {
+        if (itemRequest.getItem() == null || itemRequest.getItem().getId() == null) {
+            return "Invalid request: Item must not be null.";
+        }
+
         Optional<Item> optionalItem = itemRepository.findById(itemRequest.getItem().getId()); // Get item by its ID
+
         if (optionalItem.isEmpty()) {
             return "Item Not Found";
         }
@@ -33,7 +38,7 @@ public class RequestService {
             return "Requested Quantity exceeds Available Quantity";
         }
 
-        if (item.isReturnable() && itemRequest.getReturnDate() == null) {
+        if (item.getIsReturnable() && itemRequest.getReturnDate() == null) {
             return "Return Date is required for returnable items";
         }
 
@@ -45,35 +50,6 @@ public class RequestService {
     }
 
 
-//    public String  requestItem(ItemRequest itemRequest){
-//        Optional<Item> optionalItem = itemRepository.findById(itemRequest.getId());
-//        if(optionalItem.isEmpty()){
-//            return "Item Not Found";
-//        }
-//        Item item = optionalItem.get();
-//        if(item.getStock()< itemRequest.getQuantityRequested()){
-//            return "Requested Quantity is exceeds Available Quantity";
-//        }
-//
-//        ItemRequest itemRequest1 = mapToItemRequest(itemRequest,item  );
-////            ItemRequest itemRequest1 = new ItemRequest();
-////            itemRequest1.setItem(item);
-////            itemRequest1.setQuantityRequested(itemRequest.getQuantityRequested());
-////            itemRequest1.setRemark(itemRequest.getRemark());
-////            itemRequest1.setProjectName(itemRequest.getProjectName());
-////            itemRequest1.setUserName(itemRequest.getUserName());
-////            itemRequest1.setApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
-//            if(item.isReturnable()){
-//                if(itemRequest.getReturnDate()!=null) {
-//                    itemRequest1.setReturnDate(itemRequest.getReturnDate());
-//                }else return "Return Date Is Required";
-//            }
-//            itemRequest1.setNewRequest(true);
-//
-//        requestRepository.save(itemRequest1);
-//        return "Request sent to the admin";
-//    }
-
     public List<ItemRequestDto> getAllNonApprovedRequest() {
         List<ItemRequest> itemRequests=requestRepository.findByApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
         // Map ItemRequest objects to ItemRequestDto objects
@@ -81,7 +57,7 @@ public class RequestService {
     }
 
     @Transactional
-    public String approveRequest(Long requestId){
+    public String approveRequest(Long requestId, String adminName){
         Optional<ItemRequest> itemRequest = requestRepository.findById(requestId);
         if(itemRequest.isEmpty()){
             return "Request Not Found";
@@ -95,8 +71,11 @@ public class RequestService {
         Item item = request.getItem();
         item.setStock(item.getStock()- request.getQuantityRequested());
         request.setApprovalStatus(ApprovalStatus.APPROVED);
+        request.setApprovedBy(adminName);
         itemRepository.save(item);
         requestRepository.save(request);
+
+
 
         return "Request Approved and Stock Updated";
     }

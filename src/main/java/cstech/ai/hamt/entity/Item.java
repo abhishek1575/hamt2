@@ -48,15 +48,16 @@ public class Item {
     private boolean isDeleted = false;
 
     @Column(name = "is_returnable")
-    @JsonProperty("isReturnable")
-    private boolean isReturnable;
+    @JsonProperty("isReturnable") // Ensure correct JSON serialization
+    private Boolean isReturnable;  // Change to Boolean instead of boolean
 
-    public boolean isReturnable() {
+    public Boolean getIsReturnable() {  // Rename getter
         return isReturnable;
     }
 
-    public void setReturnable(boolean isReturnable) {
+    public void setIsReturnable(Boolean isReturnable) {  // Rename setter
         this.isReturnable = isReturnable;
     }
+
 
 }

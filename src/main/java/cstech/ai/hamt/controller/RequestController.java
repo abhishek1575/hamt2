@@ -32,6 +32,7 @@ public class RequestController {
     @PostMapping("/request")
     @PreAuthorize("hasAuthority('SUPER_ADMIN') or hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<?> requestItem(@RequestBody ItemRequest itemRequest){
+        System.out.println("ItemRequest Body from controller "+ itemRequest);
         String response = requestService.requestItem(itemRequest);
         return ResponseEntity.ok(response);
     }
@@ -39,8 +40,8 @@ public class RequestController {
     //approve request from request in admin dashboard
     @PostMapping("/approved")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> approvedRequest(@RequestParam Long requestId){
-        String response = requestService.approveRequest(requestId);
+    public ResponseEntity<?> approvedRequest(@RequestParam Long requestId, @RequestParam String adminName){
+        String response = requestService.approveRequest(requestId, adminName);
         return ResponseEntity.ok(response);
     }
 
@@ -95,11 +96,13 @@ public class RequestController {
     // deny request from request table in admin dashboard
     @DeleteMapping("/deleteRequest")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> deleteRequest(@RequestParam Long requestId){
+    public ResponseEntity<?> deleteRequest(@RequestParam Long requestId, @RequestParam String adminName){
         Optional<ItemRequest> requestInfo = requestRepository.findById(requestId);
 
         if (requestInfo.isPresent()) {
             try {
+                ItemRequest request = requestInfo.get();
+                request.setApprovedBy(adminName);
                 requestRepository.updateStatus(requestId);
                 return ResponseEntity.ok("request deny successfully");
             } catch (Exception e) {
@@ -110,21 +113,7 @@ public class RequestController {
         }
     }
 
-    //Getting History By User Id
-//    @GetMapping("/getRequestByUserId")
-//    public ResponseEntity<?>  getRequestByUserId(@RequestParam Long userId){
-//        try{
-//            List<ItemRequestDto> dtoList = requestService.getRequestByUserId(userId);
-//            return ResponseEntity.ok(dtoList);
-//
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.ok("No History Found");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Unexpected Error");
-//        }
-//    }
-
+    //Getting History By User ID
     @GetMapping("/getRequestByUserId")
     public ResponseEntity<?> getRequestByUserId(@RequestParam Long userId) {
         List<ItemRequestDto> dtoList = requestService.getRequestByUserId(userId);
