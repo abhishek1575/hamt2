@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,6 +69,33 @@ public class ItemsService {
             return false;
         }
     }
+
+    public List<ItemDto> getAllDeletedItems(){
+        List<Item> itemList = itemRepository.getAllDeletedItem();
+        return itemList.stream().map(
+                this::mapToItemDto
+        ).collect(Collectors.toList());
+    }
+    public boolean undoDeletedItems(Long id){
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if (optionalItem.isPresent()){
+            itemRepository.undoItem(id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deletePermanent(Long id){
+
+        Optional<Item> optionalItem = itemRepository.findById(id);
+        if(optionalItem.isPresent()){
+            itemRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+
     private ItemDto mapToItemDto(Item item){
         return ItemDto.builder()
                 .id(item.getId())

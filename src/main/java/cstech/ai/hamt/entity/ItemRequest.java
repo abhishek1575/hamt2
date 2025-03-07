@@ -20,8 +20,8 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Defines the relationship
-    @JoinColumn(name = "item_id", nullable = false) // Maps the foreign key column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @Column(name = "quantity_requested")
@@ -54,7 +54,8 @@ public class ItemRequest {
     }
 
     @Column(name = "is_new_request", nullable = false)
-    public boolean isNewRequest = true;
+    private boolean isNewRequest = true;
+
 
     @Column(name="returnDate")
     private LocalDateTime returnDate;

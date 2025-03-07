@@ -32,7 +32,6 @@ public class RequestController {
     @PostMapping("/request")
     @PreAuthorize("hasAuthority('SUPER_ADMIN') or hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<?> requestItem(@RequestBody ItemRequest itemRequest){
-        System.out.println("ItemRequest Body from controller "+ itemRequest);
         String response = requestService.requestItem(itemRequest);
         return ResponseEntity.ok(response);
     }
@@ -51,6 +50,9 @@ public class RequestController {
     public ResponseEntity<?> getAllHistory() {
         try {
             List<ItemRequest> itemRequests = requestRepository.getAllRequest();
+
+
+
             List<ItemRequestDto> itemDtos = itemRequests.stream().map(itemRequest -> {
                 ItemRequestDto itemRequestDto = new ItemRequestDto();
                 itemRequestDto.setItem(itemRequest.getItem());
@@ -81,6 +83,7 @@ public class RequestController {
     public ResponseEntity<?> getAllNonApprovedRequests() {
         try {
             List<ItemRequestDto> itemDtos = requestService.getAllNonApprovedRequest();
+
             if(itemDtos.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Request found");
             }
@@ -115,6 +118,7 @@ public class RequestController {
 
     //Getting History By User ID
     @GetMapping("/getRequestByUserId")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN') or hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<?> getRequestByUserId(@RequestParam Long userId) {
         List<ItemRequestDto> dtoList = requestService.getRequestByUserId(userId);
         if (dtoList.isEmpty()) {

@@ -37,4 +37,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("UPDATE Item i SET i.isReturnable = :isReturnable WHERE i.id = :id")
     void updateReturnable(@Param("isReturnable") boolean isReturnable, @Param("id") Long id);
 
+    @Query(value="SELECT * FROM item WHERE is_deleted = true", nativeQuery=true)
+    List<Item> getAllDeletedItem();
+
+    @Transactional
+    @Modifying
+    @Query(value="UPDATE item SET is_deleted = false WHERE item_id = :itemId", nativeQuery=true)
+    void undoItem(@Param("itemId")Long itemId);
+
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Item {
     @Id
@@ -45,6 +47,7 @@ public class Item {
     @PositiveOrZero
     private Long stock;
 
+    @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
     @Column(name = "is_returnable")

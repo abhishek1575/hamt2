@@ -7,6 +7,7 @@ import cstech.ai.hamt.repository.ItemRepository;
 import cstech.ai.hamt.repository.RequestRepository;
 import cstech.ai.hamt.service.ItemsService;
 import cstech.ai.hamt.service.RequestService;
+import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,6 @@ public class ItemController {
 
     @Autowired
     private ItemRepository itemRepository;
-
-    @Autowired
-    private RequestService requestService;
 
 
     // get all item in dashboard
@@ -52,11 +50,9 @@ public class ItemController {
     public ResponseEntity<?> addItems(@RequestBody Item item){
         try {
             if (itemsService.isPresent(item)) {
-                System.out.println("item controller add method "+item);
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("Item Already Exist");
             }else {
-                System.out.println("item controller add method "+item);
                 itemRepository.save(item);
                 return ResponseEntity.ok("Item Added Successfully");
             }
@@ -94,7 +90,6 @@ public class ItemController {
 
         try {
             if (itemsService.delete(ID)) {
-                System.out.println("deleted successfully");
                 return ResponseEntity.ok("Item Deleted Successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -106,4 +101,46 @@ public class ItemController {
         }
     }
 
+    @GetMapping("getAllDeleteItems")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getAllDeleteItems(){
+        try{
+            List<ItemDto> itemDtos = itemsService.getAllDeletedItems();
+            if(itemDtos.isEmpty()){
+                return ResponseEntity.ok("No Deleted Item Found");
+            }
+            return ResponseEntity.ok(itemDtos);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected Error "+e.getMessage());
+        }
+
+    }
+    @PostMapping("/undo")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> undoDeletedItem(@RequestParam Long id){
+        try{
+            if (itemsService.undoDeletedItems(id)){
+                return ResponseEntity.ok("Item Saved Successfully");
+            }else return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Item Not Found ");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected Error "+e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deletePermanent")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> deleteItemPermanent(@RequestParam Long id) {
+        try {
+            System.out.println("id from controller: "+id);
+            if (itemsService.deletePermanent(id)) {
+                return ResponseEntity.ok("Item Deleted Permanently");
+            } else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item Not Found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected Error"+e.getMessage());
+        }
+    }
 }

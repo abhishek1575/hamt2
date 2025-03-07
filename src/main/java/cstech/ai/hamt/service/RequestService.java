@@ -52,6 +52,9 @@ public class RequestService {
 
     public List<ItemRequestDto> getAllNonApprovedRequest() {
         List<ItemRequest> itemRequests=requestRepository.findByApprovalStatus(ApprovalStatus.PENDING_FOR_APPROVAL);
+        itemRequests.forEach(request -> request.setNewRequest(false));
+        // ✅ Save updated requests back to the database
+        requestRepository.saveAll(itemRequests);
         // Map ItemRequest objects to ItemRequestDto objects
         return itemRequests.stream().map(this::mapToItemRequestDto).collect(Collectors.toList());
     }
